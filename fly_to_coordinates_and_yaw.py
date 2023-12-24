@@ -52,7 +52,7 @@ def arm_and_takeoff(aTargetAltitude):
             break
         time.sleep(1)
 
-def condition_yaw(heading):
+def do_yaw(heading):
     """
     Send MAV_CMD_CONDITION_YAW message to point vehicle at a specified heading (in degrees) ralatively to vehicle
     """
@@ -86,7 +86,7 @@ def move_to_point(point):
     Moving to a point in  the AltHold mode
     """
 
-    print("Moving to location lat: %s and lon: %s".format(point.lat, point.lon))
+    print("Moving to location...")
     vehicle.simple_goto(point)
 
     # Wait until the vehicle reaches the target point
@@ -94,18 +94,18 @@ def move_to_point(point):
         remaining_distance = get_distance_metres(vehicle.location.global_relative_frame, point)
         print(f"Distance to target: {remaining_distance} meters")
 
-        if remaining_distance < 1:  # Adjust the threshold as needed
+        if remaining_distance < 1:
             print("Reached target!")
             break
 
         time.sleep(1)
 
-arm_and_takeoff(20)
+arm_and_takeoff(100)
 
 move_to_point(LocationGlobalRelative(50.443326, 30.448078, 100))
 
 print("Yaw 350 digrees relative to the UAV")
-condition_yaw(350)
+do_yaw(350)
 
 # Close vehicle object before exiting script
 print("Close vehicle object")
