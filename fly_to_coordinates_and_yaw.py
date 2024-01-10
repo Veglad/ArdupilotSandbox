@@ -20,9 +20,9 @@ def connect_uav():
 # Connecting to a vehicle
 vehicle = connect_uav()
 
-def arm_and_takeoff(aTargetAltitude):
+def arm_and_takeoff(altitude):
     """
-    Arms vehicle and fly to aTargetAltitude.
+    Arms vehicle and fly to altitude.
     """
 
     print("Basic pre-arm checks")
@@ -33,7 +33,7 @@ def arm_and_takeoff(aTargetAltitude):
 
     print("Arming motors")
     # Copter should arm in GUIDED mode
-    vehicle.mode = VehicleMode("GUIDED")
+    vehicle.mode = VehicleMode("ALT_HOLD")
     vehicle.armed = True
 
     # Confirm vehicle armed before attempting to take off
@@ -42,15 +42,26 @@ def arm_and_takeoff(aTargetAltitude):
         time.sleep(1)
 
     print("Taking off!")
-    vehicle.simple_takeoff(aTargetAltitude)  # Take off to target altitude
+    
+    print(vehicle.channels)
+    print("Cleaning all channel overrides")
+    vehicle.channels.overrides = {}
+    print("Setting channel 3 (throttle) to 1700")
+    vehicle.channels.overrides['3'] = 1700
+    print(vehicle.channels.overrides)
 
     while True:
         print(" Altitude: ", vehicle.location.global_relative_frame.alt)
+        print(vehicle.channels.overrides)
         # Break and return from function just below target altitude.
-        if vehicle.location.global_relative_frame.alt >= aTargetAltitude * 0.95:
+        if vehicle.location.global_relative_frame.alt >= altitude * 0.95:
             print("Reached target altitude")
             break
         time.sleep(1)
+    
+    print("Cleaning all channel overrides")
+    vehicle.channels.overrides = {}
+
 
 def do_yaw(heading):
     """
@@ -102,10 +113,10 @@ def move_to_point(point):
 
 arm_and_takeoff(100)
 
-move_to_point(LocationGlobalRelative(50.443326, 30.448078, 100))
+# move_to_point(LocationGlobalRelative(50.443326, 30.448078, 100))
 
-print("Yaw 350 digrees relative to the UAV")
-do_yaw(350)
+# print("Yaw 350 digrees relative to the UAV")
+# do_yaw(350)
 
 # Close vehicle object before exiting script
 print("Close vehicle object")
