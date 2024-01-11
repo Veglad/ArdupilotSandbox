@@ -50,7 +50,7 @@ def arm_and_takeoff(altitude):
     channel_override({ '2': 1500, '3': 1500, '4': 1500 })
 
     while True:
-        channel_override({ '3': 1800 })
+        channel_override({ '3': 2000 })
         print(" Altitude: ", vehicle.location.global_relative_frame.alt)
         # Break and return from function just below target altitude.
         if vehicle.location.global_relative_frame.alt >= altitude * 0.95:
@@ -104,7 +104,7 @@ def do_yaw(heading, allowed_deviation_in_degrees = 10, forse_clockwise = False):
             print(f"Heading left")
             channel_override({ '4': 1500 - speed_delta })
             
-        time.sleep(0.3)
+        time.sleep(0.2)
 
 def get_distance_metres(aLocation1, aLocation2):
     """
@@ -184,13 +184,13 @@ def move_to_point(point):
             break
 
         # constantly track bearing. If it riches the allowed deviation, we should do way to required bearing delta
-        allowed_yaw_deviation_in_degrees = 10
+        allowed_yaw_deviation_in_degrees = 5
         yaw_deviation_corrective_treshold = allowed_yaw_deviation_in_degrees + 5 # adding 5 here just to have some space and not constantly fix bearing
         if abs(bearing_plus_delta_and_normalize(bearing_degrees, -vehicle.heading)) > yaw_deviation_corrective_treshold: 
             do_yaw(bearing_degrees, allowed_yaw_deviation_in_degrees)
 
-        if remaining_distance < 100:
-            pitch = round(1425 + 25 - (25 * remaining_distance / 100))  # The closer the target, the lower the UAV's speed should be 
+        if remaining_distance < 150:
+            pitch = round(1400 + 77 - (77 * remaining_distance / 100))  # The closer the target, the lower the UAV's speed should be 
             channel_override({ '2': pitch })
         else:
             channel_override({ '2': 1000 })
